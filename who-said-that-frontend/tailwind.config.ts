@@ -13,6 +13,10 @@ export default {
         foreground: "var(--foreground)",
       },
     },
+    fontFamily: {
+      schoolbell: ['"Schoolbell"', "cursive", "sans-serif"],
+    },
   },
+
   plugins: [],
 } satisfies Config;
