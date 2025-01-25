@@ -32,8 +32,6 @@ const waitForMillis = (ms: number) =>
   });
 
 const MultiplayerTest = () => {
-  const [foo, setFoo] = useState("");
-
   const playerPool = useRef<PlayerDetails[]>([]);
 
   const multiplayer = useMultiplayer((event) => {
@@ -102,7 +100,7 @@ const MultiplayerTest = () => {
     }, 1000);
   }, []);
 
-  return <>Multiplayer Test Value: {<code>{foo}</code>}</>;
+  return <>Game loop simulator mounted!</>;
 };
 
 const generateStaticParams = () => {};
@@ -110,12 +108,16 @@ const generateStaticParams = () => {};
 export default function Page() {
   return (
     <MultiplayerProvider>
-      <h1>Host page</h1>
-      <br />
-      {process.env.GAME_SERVER}
+      <h1>***Host page***</h1>
       <br />
       <MultiplayerTest />
-      <QRCode value={`http://${process.env.GAME_SERVER}:3000`} />
+      <br />
+      <div className="bg-white inline-block m-4 p-4 rounded-xl">
+        <div className="inline-block rounded-lg overflow-clip m-0 p-0">
+          <QRCode value={`http://${process.env.GAME_SERVER_ADDRESS}:${process.env.LISTEN_PORT}`} />
+        </div>
+      </div>
+      <br />
     </MultiplayerProvider>
   );
 }

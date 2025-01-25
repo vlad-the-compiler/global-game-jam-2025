@@ -17,7 +17,8 @@ function getLocalIPAddress() {
 const nextConfig: NextConfig = {
   env: {
     WS_HOST: process.env.WS_HOST,
-    GAME_SERVER: getLocalIPAddress()
+    LISTEN_PORT: process.env.PORT,
+    GAME_SERVER_ADDRESS: getLocalIPAddress()
   }
 };
 
