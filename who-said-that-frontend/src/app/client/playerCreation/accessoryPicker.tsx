@@ -48,24 +48,28 @@ const AccessoryPicker: React.FC<PicturePickerProps> = ({ onSubmit, color, face }
         </h1>
 
         {/* Picture Grid */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4 overflow-visible">
           {pictures.map((picture, index) => (
             <motion.div
               key={index}
               onClick={() => handlePictureClick(index)}
-              className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all overflow-hidden ${color} ${
+              className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all overflow-visible ${color} ${
                 selectedPicture === index ? "border-black scale-110" : "border-gray-300"
               }`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full flex items-center justify-center overflow-visible">
                 <img
                   src={picture}
                   alt={`Placeholder ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  className="w-[160%] h-[160%] object-cover z-20 max-w-[unset]"
                 />
-                <img src={face} className="absolute top-0 left-0 w-full h-full object-cover" />
+                <img src={face} className="absolute w-[160%] h-[160%] object-cover z-10" />
+                <img
+                  src="character-base.png"
+                  className="absolute w-[160%] h-[160%] object-cover z-0"
+                />
               </div>
             </motion.div>
           ))}

@@ -14,21 +14,21 @@ type PicturePickerProps = {
 };
 
 const pictures = [
-  "/face-placeholder.png",
-  "/placeholder2.png",
-  "/placeholder3.png",
-  "/placeholder4.png",
-  "/placeholder5.png",
-  "/placeholder6.png",
-  "/placeholder7.png",
-  "/placeholder8.png",
-  "/placeholder9.png",
+  "/face-0.png",
+  "/face-1.png",
+  "/face-2.png",
+  "/face-3.png",
+  "/face-4.png",
+  "/face-5.png",
+  "/face-6.png",
+  "/face-7.png",
+  "/face-8.png",
 ];
 
 const FacePicker: React.FC<PicturePickerProps> = ({ onSubmit, color }) => {
   const [selectedPicture, setSelectedPicture] = useState<number | null>(null);
 
-  console.log(color)
+  console.log(color);
 
   const handlePictureClick = (index: number) => {
     setSelectedPicture(index);
@@ -48,19 +48,25 @@ const FacePicker: React.FC<PicturePickerProps> = ({ onSubmit, color }) => {
         </h1>
 
         {/* Picture Grid */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4 overflow-visible">
           {pictures.map((picture, index) => (
             <motion.div
               key={index}
               onClick={() => handlePictureClick(index)}
-              className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all ${
-                color} ${
+              className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all overflow-visible ${color} ${
                 selectedPicture === index ? "border-black scale-110" : "border-gray-300"
               }`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <img src={picture} alt={`Placeholder ${index + 1}`} className="w-full h-full object-cover" />
+              <div className="relative w-full h-full flex items-center justify-center">
+                <img
+                  src={picture}
+                  alt={`Placeholder ${index + 1}`}
+                  className="w-[160%] h-[160%] object-cover z-10"
+                />
+                <img src="character-base.png" className="absolute w-[160%] h-[160%] object-cover z-0" />
+              </div>
             </motion.div>
           ))}
         </div>

@@ -22,15 +22,15 @@ const PlayerCreationFlow: React.FC = () => {
   ];
 
   const faces = [
-    "/face-placeholder.png",
-    "/placeholder2.png",
-    "/placeholder3.png",
-    "/placeholder4.png",
-    "/placeholder5.png",
-    "/placeholder6.png",
-    "/placeholder7.png",
-    "/placeholder8.png",
-    "/placeholder9.png",
+    "/face-0.png",
+    "/face-1.png",
+    "/face-2.png",
+    "/face-3.png",
+    "/face-4.png",
+    "/face-5.png",
+    "/face-6.png",
+    "/face-7.png",
+    "/face-8.png",
   ];
 
   const handlePageSubmit = (data: string | number, pageIndex: number) => {

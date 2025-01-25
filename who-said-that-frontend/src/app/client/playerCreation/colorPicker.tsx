@@ -42,10 +42,13 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ onSubmit, colors }) => {
               className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all ${color} ${
                 selectedColor === index ? "border-black scale-110" : "border-gray-300"
               }`}
-              // style={{ backgroundColor: color }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-            />
+            >
+              <div className="relative w-full h-full flex items-center justify-center">
+                <img src="character-base.png" className="absolute w-[160%] h-[160%] object-cover" />
+              </div>
+            </motion.div>
           ))}
         </div>
 
