@@ -6,5 +6,16 @@ import NamePicker from "@/app/client/playerCreation/namePicker";
 import ColorPicker from "@/app/client/playerCreation/colorPicker";
 import FacePicker from "@/app/client/playerCreation/facePicker";
 import AccessoryPicker from "@/app/client/playerCreation/accessoryPicker";
+import WaitingCreationEnd from "@/app/client/playerCreation/waitingCreationEnd";
 
-export { Header, BottomButtons, MessagingSection, PlayerCreation, NamePicker, ColorPicker, FacePicker, AccessoryPicker }
+export {
+  Header,
+  BottomButtons,
+  MessagingSection,
+  PlayerCreation,
+  NamePicker,
+  ColorPicker,
+  FacePicker,
+  AccessoryPicker,
+  WaitingCreationEnd,
+};

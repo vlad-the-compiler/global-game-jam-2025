@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { NamePicker, ColorPicker, FacePicker, AccessoryPicker } from "@/app/client";
+import {
+  NamePicker,
+  ColorPicker,
+  FacePicker,
+  AccessoryPicker,
+  WaitingCreationEnd,
+} from "@/app/client";
 
 const PlayerCreationFlow: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [formData, setFormData] = useState<(string | number | null)[]>([null, null, null, null]);
 
   const handlePageSubmit = (data: string | number, pageIndex: number) => {
-    setFormData((prevData) => {
+    setFormData(prevData => {
       const updatedData = [...prevData];
       updatedData[pageIndex] = data;
 
@@ -19,7 +25,7 @@ const PlayerCreationFlow: React.FC = () => {
     });
 
     // Navigate to the next page after updating the data
-    if (pageIndex < 3) {
+    if (pageIndex < 4) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -27,13 +33,15 @@ const PlayerCreationFlow: React.FC = () => {
   const renderPage = () => {
     switch (currentPage) {
       case 1:
-        return <NamePicker onSubmit={(name) => handlePageSubmit(name, 0)} />;
+        return <NamePicker onSubmit={name => handlePageSubmit(name, 0)} />;
       case 2:
-        return <ColorPicker onSubmit={(colorIndex) => handlePageSubmit(colorIndex, 1)} />;
+        return <ColorPicker onSubmit={colorIndex => handlePageSubmit(colorIndex, 1)} />;
       case 3:
-        return <FacePicker onSubmit={(faceIndex) => handlePageSubmit(faceIndex, 2)} />;
+        return <FacePicker onSubmit={faceIndex => handlePageSubmit(faceIndex, 2)} />;
       case 4:
-        return <AccessoryPicker onSubmit={(accessoryIndex) => handlePageSubmit(accessoryIndex, 3)} />;
+        return <AccessoryPicker onSubmit={accessoryIndex => handlePageSubmit(accessoryIndex, 3)} />;
+      case 5:
+        return <WaitingCreationEnd />;
       default:
         return null;
     }

@@ -13,15 +13,15 @@ type ColorPickerProps = {
 };
 
 const colors = [
-  "#FF5733", // Red
-  "#33FF57", // Green
-  "#3357FF", // Blue
-  "#F3FF33", // Yellow
-  "#FF33A8", // Pink
-  "#33FFF7", // Cyan
-  "#8333FF", // Purple
-  "#FF8C33", // Orange
-  "#A833FF", // Violet
+  "#c591ff", // violet
+  "#7c76da", // purple
+  "#6dbeff", // blue
+  "#3a98bc", // turqoise
+  "#41dca0", // green
+  "#fed78a", // yellow
+  "#fe8f36", // orange
+  "#f6534e", // red
+  "#ff7fd8", // pink
 ];
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ onSubmit }) => {
@@ -50,7 +50,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ onSubmit }) => {
             <motion.div
               key={index}
               onClick={() => handleColorClick(index)}
-              className={`w-16 h-16 rounded-xl border-4 cursor-pointer shadow-md transition-all ${
+              className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all ${
                 selectedColor === index ? "border-black scale-110" : "border-gray-300"
               }`}
               style={{ backgroundColor: color }}
