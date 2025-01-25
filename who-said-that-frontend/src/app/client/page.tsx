@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Header, MessagingSection } from "@/app/client";
+import { Header, MessagingSection, PlayerCreation } from "@/app/client";
 
 const GameComponent: React.FC = () => {
   return (
@@ -10,7 +10,9 @@ const GameComponent: React.FC = () => {
       <Header />
 
       {/* Messages Container (Centered at bottom) */}
-      <MessagingSection />
+      {/* <MessagingSection /> */}
+
+      <PlayerCreation/>
     </div>
   );
 };

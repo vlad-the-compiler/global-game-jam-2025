@@ -53,7 +53,7 @@ const MessagingSection: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-end flex-grow items-center p-6 pb-12 bg-gray-100 rounded-lg shadow-lg max-w-sm mx-auto w-full space-y-4">
+    <div className="flex flex-col justify-end flex-grow items-center p-8 pb-20 bg-gray-100 rounded-lg shadow-lg max-w-sm mx-auto w-full space-y-4">
       {/* Display received/sent messages */}
       <div className="w-full space-y-2">
         {messages.map((msg, index) => (
