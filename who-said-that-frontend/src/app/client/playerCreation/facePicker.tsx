@@ -10,10 +10,11 @@ const schoolbell = Schoolbell({
 
 type PicturePickerProps = {
   onSubmit: (pictureIndex: number) => void;
+  color: string;
 };
 
 const pictures = [
-  "/placeholder1.png",
+  "/face-placeholder.png",
   "/placeholder2.png",
   "/placeholder3.png",
   "/placeholder4.png",
@@ -24,8 +25,10 @@ const pictures = [
   "/placeholder9.png",
 ];
 
-const FacePicker: React.FC<PicturePickerProps> = ({ onSubmit }) => {
+const FacePicker: React.FC<PicturePickerProps> = ({ onSubmit, color }) => {
   const [selectedPicture, setSelectedPicture] = useState<number | null>(null);
+
+  console.log(color)
 
   const handlePictureClick = (index: number) => {
     setSelectedPicture(index);
@@ -50,7 +53,8 @@ const FacePicker: React.FC<PicturePickerProps> = ({ onSubmit }) => {
             <motion.div
               key={index}
               onClick={() => handlePictureClick(index)}
-              className={`w-24 h-24 rounded-xl border-4 cursor-pointer shadow-md transition-all overflow-hidden ${
+              className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all ${
+                color} ${
                 selectedPicture === index ? "border-black scale-110" : "border-gray-300"
               }`}
               whileHover={{ scale: 1.1 }}

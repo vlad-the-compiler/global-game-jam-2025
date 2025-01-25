@@ -10,10 +10,12 @@ const schoolbell = Schoolbell({
 
 type PicturePickerProps = {
   onSubmit: (pictureIndex: number) => void;
+  color: string;
+  face: string;
 };
 
 const pictures = [
-  "/placeholder1.png",
+  "/accessory-placeholder.png",
   "/placeholder2.png",
   "/placeholder3.png",
   "/placeholder4.png",
@@ -24,8 +26,9 @@ const pictures = [
   "/placeholder9.png",
 ];
 
-const AccessoryPicker: React.FC<PicturePickerProps> = ({ onSubmit }) => {
+const AccessoryPicker: React.FC<PicturePickerProps> = ({ onSubmit, color, face }) => {
   const [selectedPicture, setSelectedPicture] = useState<number | null>(null);
+  console.log(face);
 
   const handlePictureClick = (index: number) => {
     setSelectedPicture(index);
@@ -50,13 +53,20 @@ const AccessoryPicker: React.FC<PicturePickerProps> = ({ onSubmit }) => {
             <motion.div
               key={index}
               onClick={() => handlePictureClick(index)}
-              className={`w-24 h-24 rounded-xl border-4 cursor-pointer shadow-md transition-all overflow-hidden ${
+              className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all overflow-hidden ${color} ${
                 selectedPicture === index ? "border-black scale-110" : "border-gray-300"
               }`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <img src={picture} alt={`Placeholder ${index + 1}`} className="w-full h-full object-cover" />
+              <div className="relative w-full h-full">
+                <img
+                  src={picture}
+                  alt={`Placeholder ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+                <img src={face} className="absolute top-0 left-0 w-full h-full object-cover" />
+              </div>
             </motion.div>
           ))}
         </div>

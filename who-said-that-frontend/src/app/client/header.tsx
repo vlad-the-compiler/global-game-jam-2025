@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Schoolbell } from "next/font/google";
+import Image from "next/image";
 
 // Load Schoolbell font with default weight (400)
 const schoolbell = Schoolbell({
@@ -9,18 +10,13 @@ const schoolbell = Schoolbell({
 
 // Sample SVG logo placeholder (you can replace this with your actual SVG)
 const Logo = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 100"
-    width="100"
-    height="100"
-    className="mb-6"
-  >
-    <circle cx="50" cy="50" r="45" fill="#4B8B3B" />
-    <text x="50" y="55" fontSize="20" textAnchor="middle" fill="white">
-      Logo
-    </text>
-  </svg>
+  <Image
+    src="/logo-mock.png"
+    alt="Game Logo"
+    width={180}
+    height={180}
+    priority
+  />
 );
 
 const Header: React.FC = () => {

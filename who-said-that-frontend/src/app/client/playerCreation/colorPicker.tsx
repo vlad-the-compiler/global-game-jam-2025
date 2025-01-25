@@ -10,21 +10,10 @@ const schoolbell = Schoolbell({
 
 type ColorPickerProps = {
   onSubmit: (colorIndex: number) => void;
+  colors: string[];
 };
 
-const colors = [
-  "#c591ff", // violet
-  "#7c76da", // purple
-  "#6dbeff", // blue
-  "#3a98bc", // turqoise
-  "#41dca0", // green
-  "#fed78a", // yellow
-  "#fe8f36", // orange
-  "#f6534e", // red
-  "#ff7fd8", // pink
-];
-
-const ColorPicker: React.FC<ColorPickerProps> = ({ onSubmit }) => {
+const ColorPicker: React.FC<ColorPickerProps> = ({ onSubmit, colors }) => {
   const [selectedColor, setSelectedColor] = useState<number | null>(null);
 
   const handleColorClick = (index: number) => {
@@ -50,10 +39,10 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ onSubmit }) => {
             <motion.div
               key={index}
               onClick={() => handleColorClick(index)}
-              className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all ${
+              className={`w-16 h-16 rounded-full border-4 cursor-pointer shadow-md transition-all ${color} ${
                 selectedColor === index ? "border-black scale-110" : "border-gray-300"
               }`}
-              style={{ backgroundColor: color }}
+              // style={{ backgroundColor: color }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             />
