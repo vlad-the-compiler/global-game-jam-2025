@@ -15,15 +15,15 @@ type PicturePickerProps = {
 };
 
 const pictures = [
-  "/accessory-placeholder.png",
-  "/placeholder2.png",
-  "/placeholder3.png",
-  "/placeholder4.png",
-  "/placeholder5.png",
-  "/placeholder6.png",
-  "/placeholder7.png",
-  "/placeholder8.png",
-  "/placeholder9.png",
+  "/acc-0.png",
+  "/acc-1.png",
+  "/acc-2.png",
+  "/acc-3.png",
+  "/acc-4.png",
+  "/acc-5.png",
+  "/acc-6.png",
+  "/acc-7.png",
+  "/acc-8.png",
 ];
 
 const AccessoryPicker: React.FC<PicturePickerProps> = ({ onSubmit, color, face }) => {
