@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import { Schoolbell } from "next/font/google";
+import { Nullable } from "@/utils/types";
 
 // Load Schoolbell font
 const schoolbell = Schoolbell({
   subsets: ["latin"],
-  weight: "400",
+  weight: "400"
 });
 
 type CharacterModelProps = {
   name?: string;
-  size?: "sm" | "md" | "lg";
-  color: number;
-  face: number;
-  accessory: number;
+  size?: "sm" | "md" | "lg" | "xl";
+  color: Nullable<number>;
+  face: Nullable<number>;
+  accessory: Nullable<number>;
 };
 
 const colors = [
@@ -24,7 +25,7 @@ const colors = [
   "bg-yellow-200", // yellow
   "bg-yellow-400", // orange
   "bg-red-500", // red
-  "bg-pink-400", // pink
+  "bg-pink-400" // pink
 ];
 
 const faces = [
@@ -36,7 +37,7 @@ const faces = [
   "/face-5.png",
   "/face-6.png",
   "/face-7.png",
-  "/face-8.png",
+  "/face-8.png"
 ];
 
 const accessories = [
@@ -48,34 +49,22 @@ const accessories = [
   "/acc-5.png",
   "/acc-6.png",
   "/acc-7.png",
-  "/acc-8.png",
+  "/acc-8.png"
 ];
 
-const CharacterModel: React.FC<CharacterModelProps> = ({
-  name,
-  size = "md",
-  color,
-  face,
-  accessory,
-}) => {
+const CharacterModel: React.FC<CharacterModelProps> = ({ name, size = "md", color = null, face = null, accessory = null }) => {
   return (
     <div
-      className={`w-${size === "md" ? "12" : size === "sm" ? "8" : "16"} h-${
-        size === "md" ? "12" : size === "sm" ? "8" : "16"
-      } rounded-full border-4 cursor-pointer shadow-md transition-all overflow-visible ${
-        colors[color]
-      }`}
+      className={`w-${size === "md" ? "12" : size === "sm" ? "8" : size === "xl" ? "20" : "16"} h-${
+        size === "md" ? "12" : size === "sm" ? "8" : size === "xl" ? "20" : "16"
+      } rounded-full border-4 cursor-pointer shadow-md transition-all overflow-visible ${colors[color !== null ? color : 0]}`}
     >
       <div className="relative w-full h-full flex items-center justify-center overflow-visible">
-        <img
-          src={accessories[accessory]}
-          className="w-[160%] h-[160%] object-cover z-20 max-w-[unset]"
-        />
-        <img src={faces[face]} className="absolute w-[160%] h-[160%] object-cover z-10" />
+        {accessory !== null && <img src={accessories[accessory]} className="w-[160%] h-[160%] object-cover z-20 max-w-[unset]" />}
+        {face !== null && <img src={faces[face]} className="absolute w-[160%] h-[160%] object-cover z-10" />}
         <img src="character-base.png" className="absolute w-[160%] h-[160%] object-cover z-0" />
-
       </div>
-      <h4 className={`text-${size} ${schoolbell.className} text-gray-700 uppercase`}>{name}</h4>
+      <h4 className={`text-${size} ${schoolbell.className} text-gray-700 uppercase pt-4`}>{name}</h4>
     </div>
   );
 };

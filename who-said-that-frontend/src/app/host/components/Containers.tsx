@@ -1,4 +1,5 @@
 export interface ContainerProps {
+  justify?: "center" | "start" | "end";
   className?: string;
 }
 
@@ -6,12 +7,12 @@ export interface HeadingProps {
   size?: "normal" | "medium" | "small";
 }
 
-export const HContainer = ({ children, className }: React.PropsWithChildren<ContainerProps>) => {
-  return <div className={`flex w-full h-full flex-1 flex-row justify-center items-center ${className ?? ""}`}>{children}</div>;
+export const HContainer = ({ children, className, justify = "center" }: React.PropsWithChildren<ContainerProps>) => {
+  return <div className={`flex w-full h-full flex-1 flex-row justify-${justify} items-center ${className ?? ""}`}>{children}</div>;
 };
 
-export const VContainer = ({ children, className }: React.PropsWithChildren<ContainerProps>) => {
-  return <div className={`flex w-full h-full flex-1 flex-col justify-center items-center ${className ?? ""}`}>{children}</div>;
+export const VContainer = ({ children, className, justify = "center" }: React.PropsWithChildren<ContainerProps>) => {
+  return <div className={`flex w-full h-full flex-1 flex-col justify-${justify} items-center ${className ?? ""}`}>{children}</div>;
 };
 
 export const HeadingContainer = ({ children, size = "normal" }: React.PropsWithChildren<HeadingProps>) => {

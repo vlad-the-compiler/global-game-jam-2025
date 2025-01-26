@@ -2,11 +2,15 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Schoolbell } from "next/font/google";
+import SubmissionButton from "../submissionButton";
+import { useGameContext } from "@/app/GameContext";
+import { Net } from "@/app/net/net";
+import { useMultiplayer } from "@/app/net/multiplayer";
 
 // Load Schoolbell font
 const schoolbell = Schoolbell({
   subsets: ["latin"],
-  weight: "400",
+  weight: "400"
 });
 
 const waitingMessages = [
@@ -28,16 +32,18 @@ const waitingMessages = [
   "Please wait, the other players are currently having a staring contest with their screens.",
   "Hold on, the others are too busy debating if they should go for a snack first.",
   "Please wait, the other players are contemplating the meaning of life— or at least the next move.",
-  "One moment, the other players are having an existential crisis over which button to press.",
+  "One moment, the other players are having an existential crisis over which button to press."
 ];
 
 const WaitingCreationEnd: React.FC = () => {
   const [randomWaitingMessage, setRandomWaitingMessage] = useState("");
 
+  const mp = useMultiplayer();
+  const game = useGameContext();
+
   useEffect(() => {
     // Pick a random element and convert it to uppercase
-    const randomElement =
-      waitingMessages[Math.floor(Math.random() * waitingMessages.length)].toUpperCase();
+    const randomElement = waitingMessages[Math.floor(Math.random() * waitingMessages.length)].toUpperCase();
     setRandomWaitingMessage(randomElement);
   }, []);
   return (
@@ -51,10 +57,18 @@ const WaitingCreationEnd: React.FC = () => {
           transition={{
             repeat: Infinity,
             duration: 1,
-            ease: "linear",
+            ease: "linear"
           }}
         />
         <p className={`text-gray-500 ${schoolbell.className}`}>{randomWaitingMessage}</p>
+        {game.gm && (
+          <SubmissionButton
+            text="Start game"
+            handleLocalSubmit={() => {
+              Net.Helpers.Client.advanceGame(mp);
+            }}
+          />
+        )}
       </div>
     </div>
   );

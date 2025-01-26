@@ -1,0 +1,35 @@
+@keyframes elasticAppear {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  80% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.elasticAnimation {
+  animation: elasticAppear 0.5s ease-out;
+}
+
+@keyframes expandAnimation {
+  0% {
+    opacity: 0;
+    height: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    height: 100%;
+  }
+}
+
+.expandableContent {
+  animation: expandAnimation 2s ease-out;
+}

@@ -1,16 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Schoolbell } from "next/font/google";
 import { motion } from "framer-motion";
+import { useMultiplayer } from "../net/multiplayer";
+import { Net } from "../net/net";
+import { useGameContext } from "../GameContext";
 
 // Load Schoolbell font
 const schoolbell = Schoolbell({
   subsets: ["latin"],
-  weight: "400",
+  weight: "400"
 });
 
-const MessagingSection: React.FC = () => {
+const MessagingSection: React.FC<{ prompt: string; onSent: () => void }> = ({ prompt, onSent }) => {
   const [inputText, setInputText] = useState<string>("");
-  const [messages, setMessages] = useState<string[]>(["RECEIVED MESSAGE: THIS IS A TEST MESSAGE."]);
+  // const [messages, setMessages] = useState<string[]>([]);
+  const messages = [prompt];
   const [hasSentMessage, setHasSentMessage] = useState(false); // Track if the message has been sent
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const maxLength = 100;
@@ -19,10 +23,14 @@ const MessagingSection: React.FC = () => {
     setInputText(event.target.value.toUpperCase());
   };
 
+  const mp = useMultiplayer();
+  const game = useGameContext();
+
   const handleSendMessage = () => {
     if (inputText.trim() === "") return;
-
-    setMessages([...messages, inputText]); // Add new message at the end
+    onSent();
+    Net.Helpers.Client.submitResponse(mp, game.token, inputText);
+    // setMessages([...messages, inputText]); // Add new message at the end
     setInputText(""); // Clear input field
     setHasSentMessage(true); // Disable input and button
     if (textareaRef.current) {
@@ -60,27 +68,26 @@ const MessagingSection: React.FC = () => {
           <motion.div
             key={index}
             animate={{
-              rotate: [0.4, 1.3, -0.8, 1.6, -1.2, 1.8, -0.5, 0.9, -1.4, 0.6, 0.4], // Jiggle animation
+              rotate: [0.4, 1.3, -0.8, 1.6, -1.2, 1.8, -0.5, 0.9, -1.4, 0.6, 0.4] // Jiggle animation
             }}
             transition={{
               duration: 1.5,
               repeat: Infinity,
               repeatType: "loop",
-              delay: index * 0.1, // Stagger for randomness
+              delay: index * 0.1 // Stagger for randomness
             }}
             className={`relative ${
-              index === messages.length - 1 && hasSentMessage
-                ? "bg-blue-600 text-white"
-                : "bg-white text-gray-700"
-            } p-4 rounded-2xl shadow-[2px_8px_5px_rgba(0,0,0,0.6)] border-4 border-black ${
-              schoolbell.className
-            } text-lg uppercase mb-6`}
+              index === messages.length - 1 && hasSentMessage ? "bg-blue-600 text-white" : "bg-white text-gray-700"
+            } p-4 rounded-2xl shadow-[2px_8px_5px_rgba(0,0,0,0.6)] border-4 border-black ${schoolbell.className} text-lg uppercase mb-6`}
           >
             <div className="text-left">
               {/* Message text with sender's name and timestamp */}
               <div className="name text-sm font-semibold mb-2">
                 <span className={`text-blue-600`}>User</span>
-                <span className="text-gray-500"> <small>at 10:10 AM</small></span>
+                <span className="text-gray-500">
+                  {" "}
+                  <small>at 10:10 AM</small>
+                </span>
               </div>
               <div className="message text-base">{msg}</div>
             </div>
@@ -108,20 +115,18 @@ const MessagingSection: React.FC = () => {
           disabled={hasSentMessage} // Disable after sending the first message
           className={`flex-grow p-4 text-lg border-4 border-black ${
             hasSentMessage ? "bg-gray-200 text-gray-500" : "bg-white"
-          } rounded-2xl shadow-md focus:outline-none resize-none overflow-hidden ${
-            schoolbell.className
-          } ${getTextColor()} uppercase`}
+          } rounded-2xl shadow-md focus:outline-none resize-none overflow-hidden ${schoolbell.className} ${getTextColor()} uppercase`}
           style={{
             minHeight: "50px",
             maxHeight: "200px",
-            height: "auto",
+            height: "auto"
           }}
         />
         <button
           onClick={handleSendMessage}
-          disabled={hasSentMessage} // Disable after sending the first message
+          disabled={hasSentMessage || messages[0] === ""} // Disable after sending the first message
           className={`ml-2 px-4 py-2 text-lg font-bold border-4 border-black rounded-2xl shadow-md transition ${
-            hasSentMessage
+            hasSentMessage || messages[0] === ""
               ? "bg-gray-400 text-gray-700 cursor-not-allowed"
               : "bg-blue-600 text-white hover:bg-blue-700 active:bg-gray-100"
           }`}
@@ -136,6 +141,6 @@ const MessagingSection: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
 export default MessagingSection;

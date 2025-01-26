@@ -1,17 +1,14 @@
 "use client";
 
 import { MultiplayerProvider, useMultiplayer } from "@/app/net/multiplayer";
-import React, { useEffect, useRef, useState } from "react";
+import os from "os";
+import { useEffect, useRef } from "react";
+import { GameContextProvider, GameRole, useGameContext } from "../GameContext";
 import { Net } from "../net/net";
 import { PlayerDetails } from "../net/types";
-import QRCode from "react-qr-code";
 import HalftoneContainer from "./components/HalftoneContainer";
-import os from "os";
-import Image from "next/image";
-import GameLogo from "./components/GameLogo";
-import { HContainer, HeadingContainer, VContainer } from "./components/Containers";
-import TitleScreen from "./screens/TitleScreen";
-import LoginScreen from "./screens/LoginScreen";
+import WaitingRoom from "./screens/WaitingRoom";
+import HostController from "./components/HostController";
 
 function getLocalIPAddress() {
   const networkInterfaces = os.networkInterfaces();
@@ -86,7 +83,7 @@ const MultiplayerTest = () => {
         if (!Net.Helpers.Client.registerPlayer(multiplayer)) return;
       }
       if (!Net.Helpers.Common.queryPlayerPool(multiplayer)) return;
-      await waitForMillis(500);
+      await waitForMillis(5000);
       console.log(">>> Register player details");
       playerPool.current.forEach((player, index) => {
         if (!Net.Helpers.Client.registerPlayerDetails(multiplayer, player.token, "Costica " + index, index, index + 1, index + 2)) return;
@@ -124,7 +121,7 @@ const MultiplayerTest = () => {
     }, 1000);
   }, []);
 
-  return <>Game loop simulator mounted!</>;
+  return null;
 };
 
 const generateStaticParams = () => {};
@@ -132,21 +129,27 @@ const generateStaticParams = () => {};
 export default function Page() {
   return (
     <MultiplayerProvider>
-      <HalftoneContainer>
-        {/* <TitleScreen /> */}
-        <LoginScreen />
+      <GameContextProvider role={GameRole.HOST}>
+        <HalftoneContainer>
+          <HostController />
+          {/* <MultiplayerTest /> */}
+          {/* <TitleScreen /> */}
+          {/* <WaitingRoom /> */}
+          {/* <RoundScreen /> */}
+          {/* <PresenterScreen /> */}
+          {/* <EndGameScreen /> */}
 
-        {/* <HContainer>
+          {/* <HContainer>
           <div className="font-[family-name:var(--font-archivo-black)] font-black text-[50px]">Text goes here</div>
           hmmmm
         </HContainer> */}
-        {/* <VContainer>
+          {/* <VContainer>
           <div className="inline-block rounded-lg overflow-clip m-0 p-0">
             <QRCode value={`http://${process.env.GAME_SERVER_ADDRESS}:${process.env.LISTEN_PORT}/client`} />
           </div>
         </VContainer> */}
-        {/* <MultiplayerTest /> */}
-        {/* <h1>***Host page***</h1>
+          {/* <MultiplayerTest /> */}
+          {/* <h1>***Host page***</h1>
         <br />
         <br />
         <div className="bg-white inline-block m-4 p-4 rounded-xl">
@@ -155,7 +158,8 @@ export default function Page() {
           </div>
         </div>
         <br /> */}
-      </HalftoneContainer>
+        </HalftoneContainer>
+      </GameContextProvider>
     </MultiplayerProvider>
   );
 }

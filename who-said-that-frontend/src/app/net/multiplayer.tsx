@@ -143,17 +143,17 @@ export interface IMultiplayerHook {
   dispatch: MultiplayerEventDispatch;
 }
 
-export const useMultiplayer = (handler: MultiplayerEventHandler, extras?: MultiplayerHookExtras) => {
+export const useMultiplayer = (handler?: MultiplayerEventHandler, extras?: MultiplayerHookExtras) => {
   const context = useContext(MultiplayerContext);
 
   useEffect(() => {
-    context.register(handler);
+    handler && context.register(handler);
     extras?.onConnect && context.registerOnConnect(extras?.onConnect);
     extras?.onDisconnect && context.registerOnDisconnect(extras?.onDisconnect);
     extras?.onError && context.registerOnError(extras?.onError);
 
     return () => {
-      context.deregister(handler);
+      handler && context.deregister(handler);
       extras?.onConnect && context.deregisterOnConnect(extras?.onConnect);
       extras?.onDisconnect && context.deregisterOnDisconnect(extras?.onDisconnect);
       extras?.onError && context.deregisterOnError(extras?.onError);
