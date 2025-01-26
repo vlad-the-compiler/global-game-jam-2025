@@ -140,7 +140,8 @@ def _handle_player_details(data) -> dict:
     if len(player) == 0:
         return build_response(OpCodes.ERROR, "Wrong token, my man!")
 
-    player[0] = replace(player[0], **data)
+    index = PLAYERS.index(player[0])
+    PLAYERS[index] = replace(PLAYERS[index], **data)
     return None
 
 
@@ -165,7 +166,8 @@ def _handle_query_players():
 def _handle_broadcast_prompts():
     global ROUND, GAME_STARTED
 
-    GAME_STARTED = True
+    if GAME_STARTED is False:
+        GAME_STARTED = True
     if ROUND == GAME_LENGTH:
         return build_response(OpCodes.ERROR, "Gata jocu' boss")
     ROUND += 1
