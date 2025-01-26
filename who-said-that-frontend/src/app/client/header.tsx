@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Schoolbell } from "next/font/google";
-import Image from "next/image";
 
 // Load Schoolbell font with default weight (400)
 const schoolbell = Schoolbell({
@@ -10,13 +9,14 @@ const schoolbell = Schoolbell({
 
 // Sample SVG logo placeholder (you can replace this with your actual SVG)
 const Logo = () => (
-  <Image
-    src="/logo-mock.png"
-    alt="Game Logo"
-    width={180}
-    height={180}
-    priority
-  />
+  <>
+    <div className="absolute bg-blue-400 rounded-full h-16 w-16 md:h-24 md:w-24 lg:h-36 lg:w-36" />
+    <img
+      src="/logo-mock.png"
+      alt="Game Logo"
+      className="relative h-20 w-20 md:h-24 md:w-24 lg:h-40 lg:w-40 object-cover z-10"
+    />
+  </>
 );
 
 const Header: React.FC = () => {
@@ -26,21 +26,8 @@ const Header: React.FC = () => {
   };
 
   return (
-    <div className="absolute top-0 left-0 right-0 flex justify-between p-6">
-      {/* Corner buttons */}
-      <button
-        onClick={() => handleCornerButtonClick("Options")}
-        className="w-12 h-12 flex items-center justify-center text-xl font-bold bg-gray-800 text-white rounded-full"
-      >
-        ☰
-      </button>
+    <div className="absolute mt-2 top-0 w-full flex justify-center p-6">
       <Logo />
-      <button
-        onClick={() => handleCornerButtonClick("Quit")}
-        className="w-12 h-12 flex items-center justify-center text-xl font-bold bg-red-600 text-white rounded-full"
-      >
-        ✖
-      </button>
     </div>
   );
 };
