@@ -47,11 +47,11 @@ export const GameContextProvider = ({ children, role }: React.PropsWithChildren<
   const mp = useMultiplayer(
     (event) => {
       Net.Handlers.Host.handleHostRegistrationResponse(event, (token) => {
-        console.log("pula mea: " + token);
+        console.log("host token: " + token);
         setToken(token);
       });
       Net.Handlers.Client.handlePlayerRegistrationResponse(event, (token, gameMaster) => {
-        console.log("pizda pe care mi-o doresc: " + token + " (" + gameMaster + ")");
+        console.log("client token: " + token + " (" + gameMaster + ")");
         setToken(token);
         setGm(gameMaster);
       });
