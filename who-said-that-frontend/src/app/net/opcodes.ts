@@ -13,5 +13,7 @@ export enum MultiplayerOpcodes {
   PROMPT_RECEIVED = "prompt-received",
   SUBMIT_RESPONSE = "submit-response",
   GET_CHATS = "get-chats",
-  CHATS_RECEIVED = "chats-received"
+  CHATS_RECEIVED = "chats-received",
+  ADVANCE_GAME = "advance-game",
+  GAME_END = "game-end"
 }

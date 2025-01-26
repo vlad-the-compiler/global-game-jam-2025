@@ -7,3 +7,9 @@ export const handlePlayerPool = (event: MultiplayerEvent, callback: (players: Pl
 
   callback(event.data.players);
 };
+
+export const handleGameEnd = (event: MultiplayerEvent, callback: () => void) => {
+  if (event.op !== MultiplayerOpcodes.GAME_END) return;
+
+  callback();
+};

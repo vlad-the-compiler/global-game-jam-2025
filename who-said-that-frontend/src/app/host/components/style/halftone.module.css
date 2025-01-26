@@ -1,0 +1,35 @@
+.halftoneBackground1 {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: -100;
+
+  /* Circle grid setup */
+  background: radial-gradient(circle, #ea80fc 50%, transparent 51%) 0 0;
+  background-size: 5vw 5vw; /* Base size for grid cells */
+
+  /* Mask for scaling sizes */
+  mask-image: linear-gradient(to bottom, transparent, black);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000000);
+
+  /* Allow gradual size change from top to bottom */
+  background-repeat: repeat;
+}
+
+.halftoneBackground2 {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: -90;
+
+  /* Circle grid setup */
+  background: radial-gradient(circle, #fff9c4 50%, transparent 51%) 0 0;
+  background-size: 5vw 5vw; /* Base size for grid cells */
+
+  /* Mask for scaling sizes */
+  mask-image: linear-gradient(to top, transparent, black);
+  -webkit-mask-image: linear-gradient(to top, transparent, #000000);
+
+  /* Allow gradual size change from top to bottom */
+  background-repeat: repeat;
+}

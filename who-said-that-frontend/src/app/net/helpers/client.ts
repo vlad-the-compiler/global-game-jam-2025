@@ -1,21 +1,21 @@
-import { IMultiplayerContext } from "../multiplayer";
+import { IMultiplayerHook } from "../multiplayer";
 import { MultiplayerOpcodes } from "../opcodes";
 
-export const registerPlayer = (mp: IMultiplayerContext, token?: string) => {
-  mp.dispatch(MultiplayerOpcodes.REGISTER_PLAYER, {
+export const registerPlayer = (mp: IMultiplayerHook, token?: string) => {
+  return mp.dispatch(MultiplayerOpcodes.REGISTER_PLAYER, {
     token
   });
 };
 
 export const registerPlayerDetails = (
-  mp: IMultiplayerContext,
+  mp: IMultiplayerHook,
   token: string,
   name: string,
   color: number,
   face: number,
   accessory: number
 ) => {
-  mp.dispatch(MultiplayerOpcodes.REGISTER_PLAYER_DETAILS, {
+  return mp.dispatch(MultiplayerOpcodes.REGISTER_PLAYER_DETAILS, {
     token,
     name,
     color,
@@ -24,9 +24,13 @@ export const registerPlayerDetails = (
   });
 };
 
-export const submitResponse = (mp: IMultiplayerContext, token: string, response: string) => {
-  mp.dispatch(MultiplayerOpcodes.SUBMIT_RESPONSE, {
+export const submitResponse = (mp: IMultiplayerHook, token: string, response: string) => {
+  return mp.dispatch(MultiplayerOpcodes.SUBMIT_RESPONSE, {
     token,
     response
   });
+};
+
+export const advanceGame = (mp: IMultiplayerHook) => {
+  return mp.dispatch(MultiplayerOpcodes.ADVANCE_GAME);
 };

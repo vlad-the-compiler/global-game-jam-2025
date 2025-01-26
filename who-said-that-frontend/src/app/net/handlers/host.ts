@@ -13,3 +13,9 @@ export const handleChatsReceived = (event: MultiplayerEvent, callback: (chats: C
 
   callback(event.data.chats);
 };
+
+export const handleAdvanceGame = (event: MultiplayerEvent, callback: () => void) => {
+  if (event.op !== MultiplayerOpcodes.ADVANCE_GAME) return;
+
+  callback();
+};

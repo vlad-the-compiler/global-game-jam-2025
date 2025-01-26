@@ -1,21 +1,23 @@
 import { handlePlayerRegistrationResponse, handlePromptReceived } from "./handlers/client";
-import { handlePlayerPool } from "./handlers/common";
-import { handleChatsReceived, handleHostRegistrationResponse } from "./handlers/host";
-import { registerPlayer, registerPlayerDetails, submitResponse } from "./helpers/client";
+import { handleGameEnd, handlePlayerPool } from "./handlers/common";
+import { handleAdvanceGame, handleChatsReceived, handleHostRegistrationResponse } from "./handlers/host";
+import { advanceGame, registerPlayer, registerPlayerDetails, submitResponse } from "./helpers/client";
 import { queryPlayerPool } from "./helpers/common";
-import { broadcastPrompts, getChats, registerHost } from "./helpers/host";
+import { announceGameEnd, broadcastPrompts, getChats, registerHost } from "./helpers/host";
 
 export const Net = {
   Helpers: {
     Host: {
       registerHost,
       broadcastPrompts,
-      getChats
+      getChats,
+      announceGameEnd
     },
     Client: {
       registerPlayer,
       registerPlayerDetails,
-      submitResponse
+      submitResponse,
+      advanceGame
     },
     Common: {
       queryPlayerPool
@@ -24,14 +26,16 @@ export const Net = {
   Handlers: {
     Host: {
       handleHostRegistrationResponse,
-      handleChatsReceived
+      handleChatsReceived,
+      handleAdvanceGame
     },
     Client: {
       handlePlayerRegistrationResponse,
       handlePromptReceived
     },
     Common: {
-      handlePlayerPool
+      handlePlayerPool,
+      handleGameEnd
     }
   }
 };
