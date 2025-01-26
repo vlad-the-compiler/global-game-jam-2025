@@ -179,7 +179,7 @@ def _handle_broadcast_prompts():
             {
                 "response": build_response(
                     OpCodes.PROMPT_RECEIVED,
-                    {"prompt": PLAYERS[idx].thread[ROUND - 1]},
+                    {"prompt": PLAYERS[idx].thread[ROUND - 1]},  # index out of range
                 ),
                 "websocket": player.websocket,
             }
