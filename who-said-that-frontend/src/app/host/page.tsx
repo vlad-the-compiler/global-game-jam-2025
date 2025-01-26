@@ -9,6 +9,8 @@ import { PlayerDetails } from "../net/types";
 import HalftoneContainer from "./components/HalftoneContainer";
 import WaitingRoom from "./screens/WaitingRoom";
 import HostController from "./components/HostController";
+import RoundScreen from "./screens/RoundScreen";
+import PresenterScreen from "./screens/PresenterScreen";
 
 function getLocalIPAddress() {
   const networkInterfaces = os.networkInterfaces();
@@ -131,12 +133,12 @@ export default function Page() {
     <MultiplayerProvider>
       <GameContextProvider role={GameRole.HOST}>
         <HalftoneContainer>
-          <HostController />
+          {/* <HostController /> */}
           {/* <MultiplayerTest /> */}
           {/* <TitleScreen /> */}
           {/* <WaitingRoom /> */}
           {/* <RoundScreen /> */}
-          {/* <PresenterScreen /> */}
+          <PresenterScreen />
           {/* <EndGameScreen /> */}
 
           {/* <HContainer>
