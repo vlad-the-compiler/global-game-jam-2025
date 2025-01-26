@@ -22,6 +22,8 @@ class OpCodes(Enum):
     GET_CHATS = "get-chats"
     CHATS_RECEIVED = "chats-received"
 
+    ADVANCE_GAME = "advance-game"
+
 
 PROMPTS = [
     "I just bought a pet iguana and it’s already running for mayor.",
