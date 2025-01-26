@@ -56,7 +56,7 @@ export const GameContextProvider = ({ children, role }: React.PropsWithChildren<
         setGm(gameMaster);
       });
       Net.Handlers.Common.handlePlayerPool(event, (pool) => {
-        console.log("player pool-a mea:");
+        console.log("player pool:");
         console.log(pool);
         setPlayers(pool);
       });
