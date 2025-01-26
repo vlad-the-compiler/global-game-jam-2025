@@ -1,11 +1,13 @@
 import json
 import random
 import uuid
+from dataclasses import replace
 
 from connection import ConnectionManager
 from constants import PROMPTS, OpCodes
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from game import Host, Player
 from utils import build_response
 
 app = FastAPI()
@@ -20,8 +22,8 @@ app.add_middleware(
 )
 
 manager = ConnectionManager()
-HOST: dict = None
-PLAYERS: dict = {}
+HOST: Host = None
+PLAYERS: list[Player] = []
 
 ROUND: int = 0
 GAME_LENGTH: int = 0
@@ -34,7 +36,7 @@ def reset_game(websocket):
     global HOST, PLAYERS, ROUND, GAME_LENGTH, _PROMPTS, GAME_ENDED, GAME_STARTED
 
     HOST = None
-    PLAYERS = {}
+    PLAYERS = []
     ROUND = GAME_LENGTH = 0
     GAME_STARTED = False
     GAME_ENDED = False
@@ -54,11 +56,11 @@ def _handle_host_registration(data, websocket) -> dict:
             return build_response(OpCodes.ERROR, "Y U have token?")
         else:
             token = str(uuid.uuid4())
-            HOST = {"name": "HOST", "token": token, "websocket": websocket}
+            HOST = Host(token=token, websocket=websocket)
             return build_response(OpCodes.HOST_REGISTRATION_RESPONSE, {"token": token})
     else:
         if token:
-            if token == HOST.get("token"):
+            if token == HOST.token:
                 response = build_response(
                     OpCodes.HOST_REGISTRATION_RESPONSE, {"token": token}
                 )
@@ -76,7 +78,7 @@ def _handle_host_registration(data, websocket) -> dict:
         else:
             reset_game(websocket)
             token = str(uuid.uuid4())
-            HOST = {"name": "HOST", "token": token, "websocket": websocket}
+            HOST = Host(token=token, websocket=websocket)
             return build_response(OpCodes.HOST_REGISTRATION_RESPONSE, {"token": token})
 
 
@@ -88,7 +90,7 @@ def _handle_player_registration(data, websocket) -> dict:
 
     token = data.get("token")
     if token:
-        if token in PLAYERS:
+        if len([p for p in PLAYERS if p.token == token]):
             response = build_response(
                 OpCodes.PLAYER_REGISTRATION_RESPONSE, {"token": token}
             )
@@ -109,15 +111,18 @@ def _handle_player_registration(data, websocket) -> dict:
         token = str(uuid.uuid4())
         gm = len(PLAYERS) == 0
         prompt, _PROMPTS = _PROMPTS[0], _PROMPTS[1:]
-        PLAYERS[token] = {
-            "name": "",
-            "color": None,
-            "face": None,
-            "accessory": None,
-            "gm": gm,
-            "websocket": websocket,
-            "thread": [prompt],
-        }
+        PLAYERS.append(
+            Player(
+                token=token,
+                websocket=websocket,
+                name="",
+                color=None,
+                face=None,
+                accessory=None,
+                gm=gm,
+                thread=[prompt],
+            )
+        )
         GAME_LENGTH += 1
         return build_response(
             OpCodes.PLAYER_REGISTRATION_RESPONSE, {"token": token, "gm": gm}
@@ -127,34 +132,34 @@ def _handle_player_registration(data, websocket) -> dict:
 def _handle_player_details(data) -> dict:
     global PLAYERS
 
-    token = data.get("token")
+    token = data.pop("token")
     if token is None:
         return build_response(OpCodes.ERROR, "I need a token, dude!")
-    if token not in PLAYERS:
+
+    player = [p for p in PLAYERS if p.token == token]
+    if len(player) == 0:
         return build_response(OpCodes.ERROR, "Wrong token, my man!")
-    PLAYERS[token].update(
-        {
-            "name": data.get("name"),
-            "color": data.get("color"),
-            "face": data.get("face"),
-            "accessory": data.get("accessory"),
-        }
-    )
+
+    player[0] = replace(player[0], **data)
     return None
 
 
 def _handle_query_players():
-    players_list = [
+    return build_response(
+        OpCodes.PLAYER_POOL,
         {
-            "token": token,
-            "name": p["name"],
-            "color": p["color"],
-            "face": p["face"],
-            "accessory": p["accessory"],
-        }
-        for token, p in PLAYERS.items()
-    ]
-    return build_response(OpCodes.PLAYER_POOL, {"players": players_list})
+            "players": [
+                {
+                    "token": player.token,
+                    "name": player.name,
+                    "color": player.color,
+                    "face": player.face,
+                    "accessory": player.accessory,
+                }
+                for player in PLAYERS
+            ]
+        },
+    )
 
 
 def _handle_broadcast_prompts():
@@ -166,16 +171,15 @@ def _handle_broadcast_prompts():
     ROUND += 1
 
     responses = []
-    players = list(PLAYERS.values())
-    for index, player in enumerate(players):
-        idx = (index - (ROUND - 1)) % len(PLAYERS.keys())
+    for index, player in enumerate(PLAYERS):
+        idx = (index - (ROUND - 1)) % len(PLAYERS)
         responses.append(
             {
                 "response": build_response(
                     OpCodes.PROMPT_RECEIVED,
-                    {"prompt": players[idx]["thread"][ROUND - 1]},
+                    {"prompt": PLAYERS[idx].thread[ROUND - 1]},
                 ),
-                "websocket": player["websocket"],
+                "websocket": player.websocket,
             }
         )
     return responses
@@ -184,18 +188,15 @@ def _handle_broadcast_prompts():
 def _handle_submit_response(data: str):
     token = data.get("token")
     response = data.get("response")
-    indexes = list(PLAYERS.keys())
-    players = list(PLAYERS.values())
-    if token in indexes:
-        current_player = indexes.index(token)
-    else:
+    index = next((i for i, p in enumerate(PLAYERS) if p.token == token), None)
+    if index is None:
         return
-    idx = (current_player - (ROUND - 1)) % len(players)
-    players[idx]["thread"].append(response)
+    idx = (index - (ROUND - 1)) % len(PLAYERS)
+    PLAYERS[idx].thread.append(response)
 
 
 def _handle_get_chats():
-    resp = [{"playerToken": t, "thread": p["thread"]} for t, p in PLAYERS.items()]
+    resp = [{"playerToken": p.token, "thread": p.thread} for p in PLAYERS]
     return build_response(OpCodes.CHATS_RECEIVED, {"chats": resp})
 
 
@@ -203,7 +204,7 @@ def _handle_advance_game():
     return [
         {
             "response": build_response(OpCodes.ADVANCE_GAME),
-            "websocket": HOST["websocket"],
+            "websocket": HOST.websocket,
         }
     ]
 
@@ -217,7 +218,7 @@ def _handle_game_end():
         responses.append(
             {
                 "response": build_response(OpCodes.GAME_END),
-                "websocket": player["websocket"],
+                "websocket": player.websocket,
             }
         )
     return responses
