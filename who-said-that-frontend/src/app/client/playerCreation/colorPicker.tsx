@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Schoolbell } from "next/font/google";
 import { motion } from "framer-motion";
+import SubmissionButton from "@/app/client/submissionButton";
 
 // Load Schoolbell font
 const schoolbell = Schoolbell({
@@ -34,7 +35,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ onSubmit, colors }) => {
         </h1>
 
         {/* Color Grid */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-6">
           {colors.map((color, index) => (
             <motion.div
               key={index}
@@ -52,20 +53,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ onSubmit, colors }) => {
           ))}
         </div>
 
-        {/* Submit Button */}
-        <motion.button
-          onClick={handleLocalSubmit}
-          whileHover={{ scale: selectedColor !== null ? 1.1 : 1 }}
-          whileTap={{ scale: selectedColor !== null ? 0.9 : 1 }}
-          className={`mt-4 px-6 py-3 text-lg font-bold text-white border-4 rounded-2xl shadow-md transition-all ${
-            selectedColor !== null
-              ? "bg-blue-600 border-black cursor-pointer"
-              : "bg-gray-300 border-gray-400 cursor-not-allowed"
-          } ${schoolbell.className}`}
-          disabled={selectedColor === null}
-        >
-          SUBMIT
-        </motion.button>
+        <SubmissionButton handleLocalSubmit={handleLocalSubmit} />
       </div>
     </div>
   );

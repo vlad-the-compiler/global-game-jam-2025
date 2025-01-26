@@ -7,6 +7,7 @@ import ColorPicker from "@/app/client/playerCreation/colorPicker";
 import FacePicker from "@/app/client/playerCreation/facePicker";
 import AccessoryPicker from "@/app/client/playerCreation/accessoryPicker";
 import WaitingCreationEnd from "@/app/client/playerCreation/waitingCreationEnd";
+import SubmissionButton from "@/app/client/submissionButton";
 
 const PlayerCreationPages = {
   NamePicker,
@@ -16,4 +17,4 @@ const PlayerCreationPages = {
   WaitingCreationEnd,
 };
 
-export { Header, BottomButtons, MessagingSection, PlayerCreation, PlayerCreationPages };
+export { Header, BottomButtons, SubmissionButton, MessagingSection, PlayerCreation, PlayerCreationPages };
