@@ -14,6 +14,7 @@ The server is made in Python using FastAPI. In order to run it you need Python 3
 - `source venv/bin/activate`
 - `pip install -r requirements.txt`
 - `uvicorn main:app --host 0.0.0.0 --port 8000`
+- on the server, run `ipconfig getifaddr en0` in a terminal and copy the local IP address
 
 ## Client
 
@@ -23,6 +24,11 @@ In order to run the client, you need npm installed.
 ### Steps to run
 
 - `cd <folder>/who-said-that-frontend`
+- create `.env.local` file and enter the IP from the server:
+  ```
+  PORT=3000
+  WS_HOST=ws://<ip_address>:8000/ws
+  ```
 - `npm install`
 - `npm run dev`
 - In a browser go to `localhost:3000/host` to start a game host
