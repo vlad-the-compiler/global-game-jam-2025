@@ -2,11 +2,10 @@ import json
 import random
 import uuid
 
+from connection import ConnectionManager
+from constants import PROMPTS, OpCodes
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-
-from constants import OpCodes, PROMPTS
-from connection import ConnectionManager
 from utils import build_response
 
 app = FastAPI()
@@ -26,15 +25,19 @@ PLAYERS: dict = {}
 
 ROUND: int = 0
 GAME_LENGTH: int = 0
+GAME_STARTED: bool = False
+GAME_ENDED: bool = False
 _PROMPTS: list = random.sample(PROMPTS, len(PROMPTS))
 
 
 def reset_game(websocket):
-    global HOST, PLAYERS, ROUND, GAME_LENGTH, _PROMPTS
+    global HOST, PLAYERS, ROUND, GAME_LENGTH, _PROMPTS, GAME_ENDED, GAME_STARTED
 
     HOST = None
     PLAYERS = {}
     ROUND = GAME_LENGTH = 0
+    GAME_STARTED = False
+    GAME_ENDED = False
     _PROMPTS = random.sample(PROMPTS, len(PROMPTS))
 
     for connection in manager.active_connections:
@@ -56,13 +59,22 @@ def _handle_host_registration(data, websocket) -> dict:
     else:
         if token:
             if token == HOST.get("token"):
-                return build_response(
+                response = build_response(
                     OpCodes.HOST_REGISTRATION_RESPONSE, {"token": token}
                 )
+                if GAME_ENDED:
+                    response = [{"response": response, "websocket": websocket}]
+                    response.append(
+                        {
+                            "response": build_response(OpCodes.GAME_END),
+                            "websocket": websocket,
+                        }
+                    )
+                return response
             else:
                 return build_response(OpCodes.ERROR, "Host already exists!")
         else:
-            reset_game()
+            reset_game(websocket)
             token = str(uuid.uuid4())
             HOST = {"name": "HOST", "token": token, "websocket": websocket}
             return build_response(OpCodes.HOST_REGISTRATION_RESPONSE, {"token": token})
@@ -77,12 +89,23 @@ def _handle_player_registration(data, websocket) -> dict:
     token = data.get("token")
     if token:
         if token in PLAYERS:
-            return build_response(
+            response = build_response(
                 OpCodes.PLAYER_REGISTRATION_RESPONSE, {"token": token}
             )
+            if GAME_ENDED:
+                response = [{"response": response, "websocket": websocket}]
+                response.append(
+                    {
+                        "response": build_response(OpCodes.GAME_END),
+                        "websocket": websocket,
+                    }
+                )
+            return response
         else:
             return build_response(OpCodes.ERROR, "Begone, witch!")
     else:
+        if GAME_STARTED:
+            return build_response(OpCodes.ERROR, "Game already started")
         token = str(uuid.uuid4())
         gm = len(PLAYERS) == 0
         prompt, _PROMPTS = _PROMPTS[0], _PROMPTS[1:]
@@ -135,8 +158,9 @@ def _handle_query_players():
 
 
 def _handle_broadcast_prompts():
-    global ROUND
+    global ROUND, GAME_STARTED
 
+    GAME_STARTED = True
     if ROUND == GAME_LENGTH:
         return build_response(OpCodes.ERROR, "Gata jocu' boss")
     ROUND += 1
@@ -184,6 +208,21 @@ def _handle_advance_game():
     ]
 
 
+def _handle_game_end():
+    global GAME_ENDED
+
+    GAME_ENDED = True
+    responses = []
+    for player in PLAYERS:
+        responses.append(
+            {
+                "response": build_response(OpCodes.GAME_END),
+                "websocket": player["websocket"],
+            }
+        )
+    return responses
+
+
 def handle_incoming(data: str, websocket: WebSocket) -> dict:
     try:
         json_data = json.loads(data)
@@ -212,6 +251,8 @@ def handle_incoming(data: str, websocket: WebSocket) -> dict:
             return _handle_get_chats()
         case OpCodes.ADVANCE_GAME.value:
             return _handle_advance_game()
+        case OpCodes.GAME_END.value:
+            return _handle_game_end()
         case _:
             return build_response(OpCodes.ERROR, "I don't understand your magic words")
 

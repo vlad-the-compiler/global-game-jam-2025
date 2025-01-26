@@ -23,6 +23,7 @@ class OpCodes(Enum):
     CHATS_RECEIVED = "chats-received"
 
     ADVANCE_GAME = "advance-game"
+    GAME_END = "game-end"
 
 
 PROMPTS = [
