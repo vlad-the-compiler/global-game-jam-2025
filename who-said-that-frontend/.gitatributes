@@ -1,0 +1,7 @@
+src/app/globals.css linguist-vendored
+src/app/halftone.module.css linguist-vendored
+src/app/animation.module.css linguist-vendored
+package.json linguist-vendored
+tsconfig.json linguist-vendored
+package-lock.json linguist-vendored
+postcss.config.mjs linguist-vendored
