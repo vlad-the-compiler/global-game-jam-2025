@@ -23,7 +23,11 @@ const MessagingSection: React.FC<{ prompt: string; onSent: () => void }> = ({ pr
     setInputText(event.target.value.toUpperCase());
   };
 
-  const mp = useMultiplayer();
+  const mp = useMultiplayer((event) => {
+    Net.Handlers.Client.handlePromptReceived(event, (_prompt) => {
+      setHasSentMessage(false);
+    });
+  });
   const game = useGameContext();
 
   const handleSendMessage = () => {
@@ -64,42 +68,43 @@ const MessagingSection: React.FC<{ prompt: string; onSent: () => void }> = ({ pr
     <div className="flex flex-col h-screen justify-end flex-grow items-center p-8 pb-20 bg-gray-100 rounded-lg shadow-lg max-w-sm mx-auto w-full space-y-4">
       {/* Display received/sent messages */}
       <div className="w-full space-y-2">
-        {messages.map((msg, index) => (
-          <motion.div
-            key={index}
-            animate={{
-              rotate: [0.4, 1.3, -0.8, 1.6, -1.2, 1.8, -0.5, 0.9, -1.4, 0.6, 0.4] // Jiggle animation
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatType: "loop",
-              delay: index * 0.1 // Stagger for randomness
-            }}
-            className={`relative ${
-              index === messages.length - 1 && hasSentMessage ? "bg-blue-600 text-white" : "bg-white text-gray-700"
-            } p-4 rounded-2xl shadow-[2px_8px_5px_rgba(0,0,0,0.6)] border-4 border-black ${schoolbell.className} text-lg uppercase mb-6`}
-          >
-            <div className="text-left">
-              {/* Message text with sender's name and timestamp */}
-              <div className="name text-sm font-semibold mb-2">
-                <span className={`text-blue-600`}>User</span>
-                <span className="text-gray-500">
-                  {" "}
-                  <small>at 10:10 AM</small>
-                </span>
+        {!hasSentMessage &&
+          messages.map((msg, index) => (
+            <motion.div
+              key={index}
+              animate={{
+                rotate: [0.4, 1.3, -0.8, 1.6, -1.2, 1.8, -0.5, 0.9, -1.4, 0.6, 0.4] // Jiggle animation
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                repeatType: "loop",
+                delay: index * 0.1 // Stagger for randomness
+              }}
+              className={`relative ${
+                index === messages.length - 1 && hasSentMessage ? "bg-blue-600 text-white" : "bg-white text-gray-700"
+              } p-4 rounded-2xl shadow-[2px_8px_5px_rgba(0,0,0,0.6)] border-4 border-black ${schoolbell.className} text-lg uppercase mb-6`}
+            >
+              <div className="text-left">
+                {/* Message text with sender's name and timestamp */}
+                <div className="name text-sm font-semibold mb-2">
+                  <span className={`text-blue-600`}>User</span>
+                  <span className="text-gray-500">
+                    {" "}
+                    <small>at 10:10 AM</small>
+                  </span>
+                </div>
+                <div className="message text-base">{msg}</div>
               </div>
-              <div className="message text-base">{msg}</div>
-            </div>
 
-            {/* Bubble arrow (squiggly tail) */}
-            <div
-              className={`absolute ${
-                index === messages.length - 1 && hasSentMessage ? "right-[-16px]" : "left-[-16px]"
-              } bottom-[-8px] w-0 h-0 border-t-9 border-t-[#f5f5f5] border-l-9 border-r-9 border-transparent rounded-[0_20px_0_0] transform rotate-[145deg]`}
-            />
-          </motion.div>
-        ))}
+              {/* Bubble arrow (squiggly tail) */}
+              <div
+                className={`absolute ${
+                  index === messages.length - 1 && hasSentMessage ? "right-[-16px]" : "left-[-16px]"
+                } bottom-[-8px] w-0 h-0 border-t-9 border-t-[#f5f5f5] border-l-9 border-r-9 border-transparent rounded-[0_20px_0_0] transform rotate-[145deg]`}
+              />
+            </motion.div>
+          ))}
       </div>
 
       {/* Message Input Field */}

@@ -3,60 +3,78 @@ import { Net } from "@/app/net/net";
 import React, { useEffect, useState } from "react";
 import RoundScreen from "../screens/RoundScreen";
 import WaitingRoom from "../screens/WaitingRoom";
-import { Chat } from "@/app/net/types";
+import { Chat, PlayerDetails } from "@/app/net/types";
+import { GameState, useGameContext } from "@/app/GameContext";
+import PresenterScreen from "../screens/PresenterScreen";
+import EndGameScreen from "../screens/EndGameScreen";
 
 const HostController = () => {
-  const [playing, setPlaying] = useState(false);
-  const [chats, setChats] = useState<Chat[]>([]);
+  const game = useGameContext();
 
-  const playStateRef = React.useRef<boolean>(false);
-  playStateRef.current = playing;
+  console.log("game");
+  console.log(game);
 
-  const mp = useMultiplayer((event) => {
-    Net.Handlers.Host.handleAdvanceGame(event, () => {
-      setPlaying(true);
-      // setTimeout(() => {
-      //   Net.Helpers.Host.broadcastPrompts(mp);
-      // }, 1000);
-    });
-    Net.Handlers.Host.handleChatsReceived(event, (newChats) => {
-      console.log("Chats:");
-      console.log(newChats);
-      setChats(newChats);
-    });
-  });
+  const rotationRef = React.useRef(0);
+
+  const mp = useMultiplayer();
 
   useEffect(() => {
-    setInterval(() => {
-      if (!playStateRef.current) return;
-
+    // Prompt players when game state is balanced
+    const intvl = setInterval(() => {
+      if (game.state !== GameState.STARTED) return;
       Net.Helpers.Host.getChats(mp);
-      let chatsValid = true;
+
+      let balanced = true;
       let lastChatLength = -1;
 
-      chats.forEach((chatThread) => {
+      game.chats!.forEach((chatThread) => {
         if (lastChatLength === -1) {
           lastChatLength = chatThread.thread.length;
         } else {
           if (chatThread.thread.length !== lastChatLength) {
-            chatsValid = false;
+            balanced = false;
           }
         }
       });
-
-      if (chatsValid) {
-        if (lastChatLength === 1) {
-          chatsValid = false;
+      if (balanced) {
+        if (lastChatLength < rotationRef.current + 1) {
+          balanced = false;
         }
       }
-
-      if (chatsValid) {
-        Net.Helpers.Host.broadcastPrompts(mp);
+      if (balanced) {
+        if (lastChatLength === game.players!.length + 1) {
+          console.log("*** GAME ENDED ***");
+          Net.Helpers.Host.announceGameEnd(mp);
+          game.setState(GameState.PRESENTATION);
+        } else {
+          console.log("*** BROADCASTING NEW PROMPTS ***");
+          Net.Helpers.Host.broadcastPrompts(mp);
+          rotationRef.current++;
+        }
       }
     }, 1000);
-  }, []);
 
-  return <>{playing ? <RoundScreen /> : <WaitingRoom />}</>;
+    return () => clearInterval(intvl);
+  }, [game]);
+
+  let render = null;
+
+  switch (game.state) {
+    default:
+      render = <WaitingRoom />;
+      break;
+    case GameState.STARTED:
+      render = <RoundScreen />;
+      break;
+    case GameState.PRESENTATION:
+      render = <PresenterScreen />;
+      break;
+    case GameState.ENDED:
+      render = <EndGameScreen />;
+      break;
+  }
+
+  return render;
 };
 
 export default HostController;

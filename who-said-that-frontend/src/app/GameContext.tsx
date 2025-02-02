@@ -17,20 +17,19 @@ export enum GameState {
 
 export interface IGameContext {
   role: GameRole;
-  gm: boolean;
+  gm?: boolean;
   token: string;
   state: GameState;
-  players: PlayerDetails[];
-  chats: Chat[];
+  players?: PlayerDetails[];
+  chats?: Chat[];
+  setState: (newState: GameState) => void;
 }
 
 const GameContext = React.createContext<IGameContext>({
   role: GameRole.HOST,
-  gm: false,
   token: "",
   state: GameState.LOBBY,
-  players: [],
-  chats: []
+  setState: (_: GameState) => {}
 });
 
 export interface GameContextProviderProps {
@@ -61,7 +60,30 @@ export const GameContextProvider = ({ children, role }: React.PropsWithChildren<
         setPlayers(pool);
       });
       Net.Handlers.Host.handleChatsReceived(event, (chats) => {
+        console.log("chats:");
+        console.log(chats);
         setChats(chats);
+      });
+      Net.Handlers.Host.handleAdvanceGame(event, () => {
+        if (role === GameRole.HOST) {
+          if (gameState === GameState.LOBBY) {
+            setGameState(GameState.STARTED);
+          }
+        } else {
+          console.log("*** ADVANCE ***");
+        }
+      });
+      if (role === GameRole.CLIENT) {
+        Net.Handlers.Client.handlePromptReceived(event, (_prompt) => {
+          setGameState(GameState.STARTED);
+        });
+      }
+      Net.Handlers.Common.handleGameEnd(event, () => {
+        if (gameState === GameState.STARTED) {
+          setGameState(GameState.PRESENTATION);
+        } else {
+          setGameState(GameState.ENDED);
+        }
       });
     },
     {
@@ -80,10 +102,16 @@ export const GameContextProvider = ({ children, role }: React.PropsWithChildren<
       value={{
         role,
         token,
-        gm,
         state: gameState,
-        players,
-        chats
+        setState: setGameState,
+        ...(role === GameRole.HOST
+          ? {
+              players,
+              chats
+            }
+          : {
+              gm
+            })
       }}
     >
       {children}

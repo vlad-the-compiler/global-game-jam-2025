@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Schoolbell } from "next/font/google";
 import { motion } from "framer-motion";
 
@@ -7,17 +7,29 @@ const schoolbell = Schoolbell({
   weight: "400"
 });
 
-type NamePickerProps = {
+type SubmissionButtonProps = {
+  debounce?: number;
   text?: string;
   handleLocalSubmit: (object: any) => void;
 };
 
-const SubmissionButton: React.FC<NamePickerProps> = ({ handleLocalSubmit, text = "Submit" }) => {
+const SubmissionButton: React.FC<SubmissionButtonProps> = ({ debounce = 0, handleLocalSubmit, text = "Submit" }) => {
+  const [enabled, setEnabled] = useState(true);
+
   return (
     <motion.button
-      onClick={handleLocalSubmit}
+      onClick={(event) => {
+        handleLocalSubmit(event);
+        if (debounce !== 0) {
+          setEnabled(false);
+          setTimeout(() => {
+            setEnabled(true);
+          }, debounce);
+        }
+      }}
+      disabled={!enabled}
       whileTap={{ scale: 0.9, rotate: [0, 5, -5, 5, -5, 0] }}
-      className={`relative overflow-hidden p-5 text-md font-semibold text-white bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500 bg-opacity-25 shadow-lg rounded-full transform transition-transform active:transform active:translate-y-1 group ${schoolbell.className}`}
+      className={`relative overflow-hidden p-5 text-md font-semibold text-white enabled:bg-gradient-to-r disabled:bg-gray-400  from-blue-500 via-blue-400 to-blue-500 bg-opacity-25 shadow-lg rounded-full transform transition-transform active:transform active:translate-y-1 group ${schoolbell.className}`}
       animate={{
         rotate: [0.4, 1.3, -0.8, 1.6, -1.2, 1.8, -0.5, 0.9, -1.4, 0.6, 0.4] // Jiggle animation
       }}

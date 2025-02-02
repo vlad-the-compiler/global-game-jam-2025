@@ -25,7 +25,7 @@ const WaitingRoom = () => {
         <VContainer>
           <HeadingContainer size="medium">Current Players</HeadingContainer>
           <VContainer className="grid grid-cols-4 gap-0">
-            {game.players.map((player) => (
+            {game.players!.map((player) => (
               <BouncyContainer key={player.token}>
                 <CharacterModel color={player.color} face={player.face} accessory={player.accessory} name={player.name} size="xl" />
               </BouncyContainer>

@@ -134,8 +134,8 @@ export default function Page() {
     <MultiplayerProvider>
       <GameContextProvider role={GameRole.HOST}>
         <HalftoneContainer>
-          {/* <HostController /> */}
-          <MultiplayerTest />
+          <HostController />
+          {/* <MultiplayerTest /> */}
           {/* <TitleScreen /> */}
           {/* <WaitingRoom /> */}
           {/* <RoundScreen /> */}
